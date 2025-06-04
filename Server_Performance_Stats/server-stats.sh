@@ -8,6 +8,15 @@ BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
+# ASCII Art Header
+echo -e "${CYAN}"
+cat << "EOF"
+▄▖            ▄▖    ▐▘                 ▄▖▗   ▗   
+▚ █▌▛▘▌▌█▌▛▘  ▙▌█▌▛▘▜▘▛▌▛▘▛▛▌▀▌▛▌▛▘█▌  ▚ ▜▘▀▌▜▘▛▘
+▄▌▙▖▌ ▚▘▙▖▌   ▌ ▙▖▌ ▐ ▙▌▌ ▌▌▌█▌▌▌▙▖▙▖  ▄▌▐▖█▌▐▖▄▌
+EOF
+echo -e "${NC}"
+
 
 echo -e "${BLUE}# CPU USAGE #${NC}"
 cpu_col=$(top -bn1 | awk 'NR==7 {for (i=1; i<=NF; i++) if ($i == "%CPU") print i}')
