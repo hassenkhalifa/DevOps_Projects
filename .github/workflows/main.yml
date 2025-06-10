@@ -25,7 +25,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'GitHub_Pages_Deployment'  # ← Pointe vers le dossier, pas le fichier
+          path: 'GitHub_Pages_Deployment'  
 
       - name: Deploy to GitHub Pages
         id: deployment
