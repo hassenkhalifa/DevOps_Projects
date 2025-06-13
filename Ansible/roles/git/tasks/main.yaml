@@ -1,0 +1,10 @@
+- name: installer git
+  apt:
+    name: git
+    state: present
+- name: S'assurer que git fonctionne
+  ansible.builtin.command: git --version
+  register: git_version
+- name: Afficher la version de git
+  ansible.builtin.debug:
+    var: git_version.stdout

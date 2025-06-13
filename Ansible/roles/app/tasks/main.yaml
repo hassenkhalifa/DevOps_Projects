@@ -1,0 +1,19 @@
+- name: Cloner le repo contenant index.html
+  ansible.builtin.git:
+    repo: 'https://github.com/hassenkhalifa/DevOps_Projects.git'
+    dest: /tmp/devops_projects
+    version: main
+
+- name: Copier index.html sur la machine distante
+  ansible.builtin.copy:
+    src: /tmp/devops_projects/GitHub_Pages_Deployment/index.html
+    dest: /var/www/html/index.html
+    owner: www-data
+    group: www-data
+    mode: '0644'
+    remote_src: 'yes'
+
+- name: Redémarrer le service Nginx
+  ansible.builtin.service:
+    name: nginx
+    state: restarted
