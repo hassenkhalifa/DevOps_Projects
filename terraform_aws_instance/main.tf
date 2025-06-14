@@ -1,0 +1,50 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+
+
+resource "aws_key_pair" "deploy" {
+  key_name   = "deploy-key"
+  public_key = file("~/.ssh/id_ed25519.pub")
+}
+
+resource "aws_security_group" "ssh_access" {
+  name        = "ssh_access"
+  description = "Allow SSH inbound traffic"
+
+  ingress {
+    description = "SSH"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "allow_ssh"
+  }
+}
+
+resource "aws_instance" "ubuntu_server" {
+  ami                         = "ami-020cba7c55df1f615"
+  instance_type               = "t2.micro"
+  key_name                    = aws_key_pair.deploy.key_name # <-- corrigé
+  vpc_security_group_ids      = [aws_security_group.ssh_access.id] # <-- corrigé
+  associate_public_ip_address = true
+
+  tags = {
+    Name = "Ubuntu-Server"
+  }
+}
