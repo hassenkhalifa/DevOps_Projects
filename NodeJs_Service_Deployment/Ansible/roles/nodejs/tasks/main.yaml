@@ -1,0 +1,52 @@
+- name: Update apt cache
+  apt:
+    update_cache: 'yes'
+    cache_valid_time: 3600
+  become: 'yes'
+- name: Install Node.js
+  apt:
+    name: nodejs
+    state: present
+  become: 'yes'
+- name: Install npm
+  apt:
+    name: npm
+    state: present
+  become: 'yes'
+- name: Create application user
+  user:
+    name: nodeapp
+    system: 'yes'
+    shell: /bin/bash
+    home: /tmp/devops_projects
+    create_home: 'yes'
+  become: 'yes'
+- name: Set ownership of application directory
+  file:
+    path: /tmp/devops_projects
+    owner: nodeapp
+    group: nodeapp
+    recurse: 'yes'
+  become: 'yes'
+- name: Install application dependencies (if package.json exists)
+  shell: |
+    if [ -f package.json ]; then
+      sudo -u nodeapp npm install
+    fi
+  args:
+    chdir: /tmp/devops_projects/NodeJs_Service_Deployment/NodeJsApp
+  become: 'yes'
+  ignore_errors: 'yes'
+- name: Stop any running app.js
+  shell: pkill -f "node app.js" || true
+  args:
+    chdir: /tmp/devops_projects/NodeJs_Service_Deployment/NodeJsApp
+  become: 'yes'
+  ignore_errors: 'yes'
+- name: Start app.js
+  shell: nohup sudo -u nodeapp node app.js > app.log 2>&1 &
+  args:
+    chdir: /tmp/devops_projects/NodeJs_Service_Deployment/NodeJsApp
+  become: 'yes'
+  ignore_errors: 'yes'
+

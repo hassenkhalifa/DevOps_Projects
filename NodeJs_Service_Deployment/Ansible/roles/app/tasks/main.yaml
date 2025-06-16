@@ -1,0 +1,19 @@
+- name: Supprimer le dossier /tmp/devops_projects (si existant)
+  file:
+    path: /tmp/devops_projects
+    state: absent
+  become: 'yes'
+- name: Autoriser le dossier comme safe.directory pour git
+  shell: git config --global --add safe.directory /tmp/devops_projects
+  become: 'yes'
+  ignore_errors: 'yes'
+- name: Cloner le repo contenant l'app nodejs (en écrasant si existant)
+  ansible.builtin.git:
+    repo: 'https://github.com/hassenkhalifa/DevOps_Projects.git'
+    dest: /tmp/devops_projects
+    version: main
+    force: 'yes'
+  become: 'yes'
+
+
+

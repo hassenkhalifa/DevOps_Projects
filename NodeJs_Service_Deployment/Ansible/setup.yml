@@ -1,0 +1,14 @@
+- name: config serveur
+  hosts: web
+  become: yes
+  roles:
+    - role: base
+      tags: base
+    - role: git
+      tags: git
+    - role: app
+      tags: app
+    - role: nodejs
+      tags: nodejs
+    - role: ssh
+      tags: ssh
