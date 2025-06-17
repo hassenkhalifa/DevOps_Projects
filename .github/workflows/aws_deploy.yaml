@@ -26,8 +26,7 @@ jobs:
           SSH_PUBLIC_KEY: '${{ secrets.SSH_PUBLIC_KEY }}'
       - name: Get public IP
         id: ip
-        run: |
-          echo "PUBLIC_IP=$(terraform output -raw instance_public_ip)" >> $GITHUB_ENV
+        run: echo "IPIP=$(terraform output -raw instance_public_ip)" >> $GITHUB_ENV 
         working-directory: NodeJs_Service_Deployment/Terraform
   ansible:
     needs: terraform
@@ -51,4 +50,4 @@ jobs:
         env:
           ANSIBLE_HOST_KEY_CHECKING: 'False'
         run: |
-          ansible-playbook -i "${{ env.PUBLIC_IP }}," -u ubuntu --private-key ~/.ssh/id_ed25519 NodeJs_Service_Deployment/Ansible/setup.yml
+          ansible-playbook -i ${{IPIP}} -u ubuntu --private-key ~/.ssh/id_ed25519 NodeJs_Service_Deployment/Ansible/setup.yml
