@@ -21,7 +21,7 @@ jobs:
         working-directory: NodeJs_Service_Deployment/Terraform
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve -var="ssh_public_key=${{ secrets.SSH_PUBLIC_KEY }}"
         working-directory: NodeJs_Service_Deployment/Terraform
         env:
           TF_VAR_aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
