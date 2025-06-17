@@ -50,4 +50,4 @@ jobs:
         env:
           ANSIBLE_HOST_KEY_CHECKING: 'False'
         run: |
-          ansible-playbook -i ${{IPIP}} -u ubuntu --private-key ~/.ssh/id_ed25519 NodeJs_Service_Deployment/Ansible/setup.yml
+          ansible-playbook -i "${{IPIP}}" -u ubuntu --private-key ~/.ssh/id_ed25519 NodeJs_Service_Deployment/Ansible/setup.yml
