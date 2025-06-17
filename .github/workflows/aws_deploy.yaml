@@ -1,56 +1,50 @@
 name: Deploy with Terraform and Ansible
-
-on:
+'on':
   push:
-    branches: [ main ]
-  workflow_dispatch:
-
+    branches:
+      - main
+  workflow_dispatch: null
 jobs:
   terraform:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
-
       - name: Terraform Init
         run: terraform init
         working-directory: NodeJs_Service_Deployment/Terraform
-
       - name: Terraform Apply
-        run: terraform apply -auto-approve -var="ssh_public_key=${{ secrets.SSH_PUBLIC_KEY }}"
+        run: >-
+          terraform apply -auto-approve -var="ssh_public_key=${{
+          secrets.SSH_PUBLIC_KEY }}"
         working-directory: NodeJs_Service_Deployment/Terraform
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      # Optionnel : Récupérer l'IP publique de l'instance créée
+          AWS_ACCESS_KEY_ID: '${{ secrets.AWS_ACCESS_KEY_ID }}'
+          AWS_SECRET_ACCESS_KEY: '${{ secrets.AWS_SECRET_ACCESS_KEY }}'
+          SSH_PUBLIC_KEY: '${{secrets.SSH_PUBLIC_KEY}}'
       - name: Get public IP
         id: ip
         run: |
           echo "PUBLIC_IP=$(terraform output -raw public_ip)" >> $GITHUB_ENV
         working-directory: NodeJs_Service_Deployment/Terraform
-
   ansible:
     needs: terraform
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
-
+          python-version: 3.x
       - name: Install Ansible
         run: pip install ansible
-
       - name: Run Ansible Playbook
         env:
-          ANSIBLE_HOST_KEY_CHECKING: "False"
-        run: |
-          ansible-playbook -i "${{ env.PUBLIC_IP }}," -u ubuntu --private-key "${{ secrets.SSH_PRIVATE_KEY }}" NodeJs_Service_Deployment/Ansible/setup.yml
+          ANSIBLE_HOST_KEY_CHECKING: 'False'
+        run: >
+          ansible-playbook -i "${{ env.PUBLIC_IP }}," -u ubuntu --private-key
+          "${{ secrets.SSH_PRIVATE_KEY }}"
+          NodeJs_Service_Deployment/Ansible/setup.yml
