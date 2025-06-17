@@ -43,15 +43,15 @@ jobs:
         run: pip install ansible
       - name: Setup SSH key
         run: |
-              mkdir -p ~/.ssh
-              echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-              chmod 600 ~/.ssh/id_ed25519
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+      
       - name: Remplacer l'IP dans inventory.ini
         run: sed -i "s/{{ public_ip }}/${{ env.PUBLIC_IP }}/g" NodeJs_Service_Deployment/Ansible/inventory.ini
+      
       - name: Run Ansible Playbook
         env:
           ANSIBLE_HOST_KEY_CHECKING: 'False'
-        run: >
-          ansible-playbook -i "${{ env.PUBLIC_IP }}," -u ubuntu --private-key
-          "${{ secrets.SSH_PRIVATE_KEY }}"
-          NodeJs_Service_Deployment/Ansible/setup.yml
+        run: |
+          ansible-playbook -i NodeJs_Service_Deployment/Ansible/inventory.ini NodeJs_Service_Deployment/Ansible/setup.yml
