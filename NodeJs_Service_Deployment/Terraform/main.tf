@@ -10,7 +10,7 @@ terraform {
 
 resource "aws_key_pair" "deploy" {
   key_name   = "deploy-key"
-  public_key = file("~/.ssh/id_ed25519.pub")
+  public_key = var.ssh_public_key
 }
 
 resource "aws_security_group" "ssh_access" {
