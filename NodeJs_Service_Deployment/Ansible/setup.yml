@@ -1,6 +1,10 @@
+- name: Remplacer l'IP dans inventory.ini
+  run: >
+    sed -i "s/{{ public_ip }}/${{ env.PUBLIC_IP }}/g"
+    NodeJs_Service_Deployment/Ansible/inventory.ini
 - name: config serveur
   hosts: web
-  become: yes
+  become: 'yes'
   roles:
     - role: base
       tags: base
