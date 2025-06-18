@@ -78,20 +78,25 @@ resource "aws_instance" "ubuntu_server" {
 
 }
 
+# Elastic IP (EIP)
+resource "aws_eip" "static_ip" {
+  instance = aws_instance.ubuntu_server.id
+  domain   = "vpc"
+  depends_on = [aws_instance.ubuntu_server]
+}
+
+# Sélection de la zone Route 53
 data "aws_route53_zone" "selected" {
   name         = "hassendevops.com."
   private_zone = false
 }
 
-resource "aws_eip" "static_ip" {
-  instance = aws_instance.ubuntu_server.id
-  domain = "vpc"
-}
-
+# Enregistrement DNS Route 53
 resource "aws_route53_record" "dns_record" {
   zone_id = data.aws_route53_zone.selected.zone_id
   name    = "ec2.hassendevops.com"
   type    = "A"
   ttl     = 300
   records = [aws_eip.static_ip.public_ip]
+  depends_on = [aws_eip.static_ip]
 }
