@@ -1,9 +1,10 @@
 name: Deploy with Ansible
 'on':
-  push:
-    branches:
-      - main
-  workflow_dispatch: null
+  workflow_run:
+    workflows:
+      - Deploy with Terraform
+    types:
+      - completed
 jobs:
   ansible:
     runs-on: ubuntu-latest
@@ -25,4 +26,4 @@ jobs:
         env:
           ANSIBLE_HOST_KEY_CHECKING: 'False'
         run: |
-          ansible-playbook -i NodeJs_Service_Deployment/Ansible/inventory.ini NodeJs_Service_Deployment/Ansible/setup.yml
+          ansible-playbook -i "${{ github.event.workflow_run.outputs.instance_ip }}," -u ubuntu --private-key ~/.ssh/id_ed25519 NodeJs_Service_Deployment/Ansible/setup.yml
