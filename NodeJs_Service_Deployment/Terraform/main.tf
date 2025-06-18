@@ -96,7 +96,7 @@ resource "aws_route53_record" "dns_record" {
   zone_id = data.aws_route53_zone.selected.zone_id
   name    = "ec2.hassendevops.com"
   type    = "A"
-  ttl     = 300
+  ttl     = 10000
   records = [aws_eip.static_ip.public_ip]
   depends_on = [aws_eip.static_ip]
 }
