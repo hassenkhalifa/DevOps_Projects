@@ -32,3 +32,7 @@ jobs:
           IP=$(terraform output -raw instance_public_ip)
           echo "INSTANCE_IP=$IP" >> $GITHUB_OUTPUT
         working-directory: NodeJs_Service_Deployment/Terraform
+      - name: Get public IP
+        id: change_inventory_ip
+        run: sed -i 's/{{el}}/54.12.13.5/g' inventory.ini
+        working-directory: NodeJs_Service_Deployment/Ansible
