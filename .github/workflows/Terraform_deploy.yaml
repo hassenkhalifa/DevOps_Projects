@@ -24,3 +24,9 @@ jobs:
           AWS_ACCESS_KEY_ID: '${{ secrets.AWS_ACCESS_KEY_ID }}'
           AWS_SECRET_ACCESS_KEY: '${{ secrets.AWS_SECRET_ACCESS_KEY }}'
           SSH_PUBLIC_KEY: '${{ secrets.SSH_PUBLIC_KEY }}'
+      - name: Get public IP
+        id: get_ip
+        run: |
+          IP=$(terraform output -raw instance_public_ip)
+          echo "INSTANCE_IP=$IP" >> $GITHUB_OUTPUT
+        working-directory: NodeJs_Service_Deployment/Terraform
