@@ -1,20 +1,14 @@
-- name: Mettre à jour les paquets
-  apt:
-    update_cache: 'yes'
-    upgrade: dist
-- name: Installer les utilitaires de base
-  apt:
-    name:
-      - curl
-      - vim
-      - git
-    state: present
-- name: Installer fail2ban
-  apt:
-    name: fail2ban
-    state: present
-- name: S'assurer que fail2ban est démarré
-  service:
-    name: fail2ban
-    state: started
-    enabled: 'yes'
+    - name: Construire l'image Docker depuis le Dockerfile
+      docker_image:
+        build:
+          path: ../DockerImages
+        name: NodejsApp
+        tag: latest
+    - name: Lancer le conteneur Docker
+      docker_container:
+        name: mon_conteneur_node_js
+        image: 'NodejsApp:latest'
+        state: started
+        restart_policy: always
+        ports:
+          - '3000:3000'
