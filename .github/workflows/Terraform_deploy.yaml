@@ -7,11 +7,11 @@ name: Deploy with Terraform
 jobs:
   terraform:
     runs-on: ubuntu-latest
-    outputs:
-      instance_ip: ${{ steps.get_ip.outputs.INSTANCE_IP }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
       - name: Terraform Init
@@ -26,13 +26,26 @@ jobs:
           AWS_ACCESS_KEY_ID: '${{ secrets.AWS_ACCESS_KEY_ID }}'
           AWS_SECRET_ACCESS_KEY: '${{ secrets.AWS_SECRET_ACCESS_KEY }}'
           SSH_PUBLIC_KEY: '${{ secrets.SSH_PUBLIC_KEY }}'
-      - name: Get public IP
+      - name: Get public IP and update inventory
         id: get_ip
-        run: |
-          IP=$(terraform output -raw instance_public_ip)
-          echo "INSTANCE_IP=$IP" >> $GITHUB_OUTPUT
-        working-directory: NodeJs_Service_Deployment/Terraform
-      - name: Get public IP
-        id: change_inventory_ip
-        run: sed -i 's/{{el}}/54.12.13.5/g' inventory.ini
         working-directory: NodeJs_Service_Deployment/Ansible
+        run: >
+          IP=$(terraform output -raw instance_public_ip
+          -state=../Terraform/terraform.tfstate)
+          
+          sed -i "s/{{ EC2IP }}/$IP/g" inventory.ini
+      - name: Commit and push inventory update
+        working-directory: NodeJs_Service_Deployment/Ansible
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+        run: >
+          git config user.name "github-actions[bot]"
+
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add inventory.ini
+
+          git diff --cached --quiet || git commit -m "Update inventory.ini with
+          EC2 IP from Terraform"
+
+          git push
