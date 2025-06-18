@@ -23,31 +23,3 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: '${{ secrets.AWS_ACCESS_KEY_ID }}'
           AWS_SECRET_ACCESS_KEY: '${{ secrets.AWS_SECRET_ACCESS_KEY }}'
-          SSH_PUBLIC_KEY: '${{ secrets.SSH_PUBLIC_KEY }}'
-      - name: Get public IP
-        id: ip
-        run: echo "IPIP=$(terraform output -raw instance_public_ip)" >> $GITHUB_ENV 
-        working-directory: NodeJs_Service_Deployment/Terraform
-  ansible:
-    needs: terraform
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.x
-      - name: Install Ansible
-        run: pip install ansible
-      - name: Setup SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-        
-      - name: Run Ansible Playbook
-        env:
-          ANSIBLE_HOST_KEY_CHECKING: 'False'
-        run: |
-          ansible-playbook -i "${{IPIP}}" -u ubuntu --private-key ~/.ssh/id_ed25519 NodeJs_Service_Deployment/Ansible/setup.yml
