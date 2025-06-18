@@ -7,6 +7,8 @@ name: Deploy with Terraform
 jobs:
   terraform:
     runs-on: ubuntu-latest
+    outputs:
+      instance_ip: ${{ steps.get_ip.outputs.INSTANCE_IP }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
