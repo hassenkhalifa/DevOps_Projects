@@ -33,13 +33,9 @@ jobs:
           sed -i "s/{{ EC2IP }}/$IP/g" ../Ansible/inventory.ini
         working-directory: NodeJs_Service_Deployment/Terraform
       - name: Commit and push inventory update
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Update inventory.ini with EC2 IP from Terraform
+          branch: main
+          file_pattern: inventory.ini
         working-directory: NodeJs_Service_Deployment/Ansible
-        env:
-          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git remote set-url origin https://x-access-token:${PAT_TOKEN}@github.com/hassenkhalifa/DevOps_Projects.git
-          git add inventory.ini
-          git diff --cached --quiet || git commit -m "Update inventory.ini with EC2 IP from Terraform"
-          git push origin main
