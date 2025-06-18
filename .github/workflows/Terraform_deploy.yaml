@@ -30,7 +30,7 @@ jobs:
         run: |
           set -e
           IP=$(terraform output -raw instance_public_ip)
-          sed -i "s/{{ EC2IP }}/$IP/g" NodeJs_Service_Deployment/Ansible/inventory.ini
+          sed -i "s/{{ EC2IP }}/$IP/g" ../Ansible/inventory.ini
         working-directory: NodeJs_Service_Deployment/Terraform
       - name: Commit and push inventory update
         uses: EndBug/add-and-commit@v9
