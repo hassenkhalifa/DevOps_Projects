@@ -26,4 +26,4 @@ jobs:
         env:
           ANSIBLE_HOST_KEY_CHECKING: 'False'
         run: |
-          ansible-playbook -i "${{ github.event.workflow_run.outputs.INSTANCE_IP }}," -u ubuntu --private-key ~/.ssh/id_ed25519 NodeJs_Service_Deployment/Ansible/setup.yml
+          ansible-playbook -i NodeJs_Service_Deployment/Ansible/inventory.ini -u ubuntu --private-key ~/.ssh/id_ed25519 NodeJs_Service_Deployment/Ansible/setup.yml
