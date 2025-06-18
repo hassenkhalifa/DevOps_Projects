@@ -1,3 +1,7 @@
+    - name: Mettre à jour les paquets
+      apt:
+        update_cache: 'yes'
+        upgrade: dist
     - name: Construire l'image Docker depuis le Dockerfile
       docker_image:
         build:
