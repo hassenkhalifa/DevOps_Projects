@@ -1,14 +1,16 @@
-    - name: Construire l'image Docker depuis le Dockerfile
-      docker_image:
-        build:
-          path: ../DockerImages
-        name: NodejsApp
-        tag: latest
-    - name: Lancer le conteneur Docker
-      docker_container:
-        name: mon_conteneur_node_js
-        image: 'NodejsApp:latest'
-        state: started
-        restart_policy: always
-        ports:
-          - '3000:3000'
+- name: Construire l'image Docker depuis le Dockerfile
+  docker_image:
+    source: build
+    build:
+      path: ../DockerImages
+    name: NodejsApp
+    tag: latest
+
+- name: Lancer le conteneur Docker
+  docker_container:
+    name: mon_conteneur_node_js
+    image: NodejsApp:latest
+    state: started
+    restart_policy: always
+    ports:
+      - "3000:3000"
