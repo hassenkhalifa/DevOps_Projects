@@ -85,7 +85,7 @@ data "aws_route53_zone" "selected" {
 
 resource "aws_eip" "static_ip" {
   instance = aws_instance.ubuntu_server.id
-  domain   = "vpc"
+  domain = "vpc"
 }
 
 resource "aws_route53_record" "dns_record" {
