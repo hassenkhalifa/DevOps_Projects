@@ -1,4 +1,4 @@
-name: Deploy with Ansible
+name: Deploy a Docker image
 'on':
   workflow_run:
     workflows:
