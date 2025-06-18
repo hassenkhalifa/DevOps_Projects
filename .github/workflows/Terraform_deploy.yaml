@@ -35,15 +35,11 @@ jobs:
       - name: Commit and push inventory update
         working-directory: NodeJs_Service_Deployment/Ansible
         env:
-          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-        run: >
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
           git config user.name "github-actions[bot]"
-
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
+          git remote set-url origin https://x-access-token:${PAT_TOKEN}@github.com/hassenkhalifa/DevOps_Projects.git
           git add inventory.ini
-
-          git diff --cached --quiet || git commit -m "Update inventory.ini with
-          EC2 IP from Terraform"
-
-          git push
+          git diff --cached --quiet || git commit -m "Update inventory.ini with EC2 IP from Terraform"
+          git push origin main
