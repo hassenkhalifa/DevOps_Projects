@@ -27,13 +27,11 @@ jobs:
           AWS_SECRET_ACCESS_KEY: '${{ secrets.AWS_SECRET_ACCESS_KEY }}'
           SSH_PUBLIC_KEY: '${{ secrets.SSH_PUBLIC_KEY }}'
       - name: Get public IP and update inventory
-        id: get_ip
-        working-directory: NodeJs_Service_Deployment/Ansible
-        run: >
-          IP=$(terraform output -raw instance_public_ip
-          -state=../Terraform/terraform.tfstate)
-          
-          sed -i "s/{{ EC2IP }}/$IP/g" inventory.ini
+        run: |
+          set -e
+          IP=$(terraform output -raw instance_public_ip)
+          sed -i "s/{{ EC2IP }}/$IP/g" ../Ansible/inventory.ini
+        working-directory: NodeJs_Service_Deployment/Terraform
       - name: Commit and push inventory update
         working-directory: NodeJs_Service_Deployment/Ansible
         env:
