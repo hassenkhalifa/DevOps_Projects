@@ -1,0 +1,9 @@
+- name: config serveur
+  hosts: all
+  become: 'yes'
+  roles:
+    - role: install_docker
+      tags: install_docker
+    - role: docker_image
+      tags: docker_image
+
