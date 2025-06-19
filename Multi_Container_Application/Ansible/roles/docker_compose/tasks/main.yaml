@@ -1,4 +1,16 @@
+- name: Installer Docker Compose
+  become: yes
+  ansible.builtin.get_url:
+    url: "https://github.com/docker/compose/releases/latest/download/docker-compose-{{ ansible_system | lower }}-{{ ansible_architecture }}"
+    dest: /usr/local/bin/docker-compose
+    mode: '0755'
+
+- name: Vérifier la version de Docker Compose installée
+  ansible.builtin.command: docker-compose --version
+  register: compose_version
+  changed_when: false
+
 - name: Lancer le Docker Compose
-  command: docker-compose up --build -d
+  ansible.builtin.command: docker-compose up --build -d
   args:
-    chdir: /tmp/devops_projects/Multi_Container_Application/DockerCompose
+    chdir: /chemin/vers/ton/docker-compose-directory
