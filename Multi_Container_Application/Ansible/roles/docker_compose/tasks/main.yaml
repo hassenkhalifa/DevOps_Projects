@@ -1,4 +1,3 @@
 - name: Lancer le Docker Compose
   command: docker-compose up --build -d
-    args:
-        chdir: /tmp/devops_projects/Multi_Container_Application/DockerCompose
+  chdir: /tmp/devops_projects/Multi_Container_Application/DockerCompose
