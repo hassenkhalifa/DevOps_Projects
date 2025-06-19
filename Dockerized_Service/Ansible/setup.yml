@@ -4,6 +4,8 @@
   roles:
     - role: install_docker
       tags: install_docker
+    - role: DL_repo
+      tags: DL_repo
     - role: docker_image
       tags: docker_image
 
