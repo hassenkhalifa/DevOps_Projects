@@ -21,7 +21,7 @@ services:
       - front-tier
       - back-tier
   worker:
-    build: ./worker
+    build: ./DockerImages/worker
     depends_on:
       redis:
         condition: service_healthy
