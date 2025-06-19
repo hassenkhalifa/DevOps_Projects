@@ -102,7 +102,7 @@ resource "aws_instance" "ubuntu_server" {
   ami                         = "ami-020cba7c55df1f615"
   instance_type               = "t2.micro"
   key_name                    = aws_key_pair.deploy.key_name
-  vpc_security_group_ids      = [aws_security_group.ssh_access.id, aws_security_group.Node_App.id]
+  vpc_security_group_ids      = [aws_security_group.ssh_access.id, aws_security_group.Node_App.id, aws_security_group.MULTI_CONTAINER_APP.id]
   associate_public_ip_address = true
 
   tags = {
