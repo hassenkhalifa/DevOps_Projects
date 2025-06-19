@@ -1,0 +1,11 @@
+- name: config serveur
+  hosts: all
+  become: 'yes'
+  roles:
+    - role: install_docker
+      tags: install_docker
+    - role: DL_repo
+      tags: DL_repo
+    - role: docker_compose
+      tags: docker_compose
+

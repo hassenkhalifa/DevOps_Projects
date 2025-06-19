@@ -1,0 +1,66 @@
+version: '3.8'
+services:
+  vote:
+    build: ./DockerImages/vote
+    depends_on:
+      redis:
+        condition: service_healthy
+    ports:
+      - '8080:80'
+    networks:
+      - front-tier
+      - back-tier
+  result:
+    build: ./DockerImages/result
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - '8081:80'
+      - '127.0.0.1:9229:9229'
+    networks:
+      - front-tier
+      - back-tier
+  worker:
+    build: ./worker
+    depends_on:
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    networks:
+      - back-tier
+  redis:
+    image: 'redis:alpine'
+    healthcheck:
+      test:
+        - CMD
+        - redis-cli
+        - ping
+      interval: 5s
+      timeout: 3s
+      retries: 3
+    networks:
+      - back-tier
+  db:
+    image: 'postgres:15-alpine'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - 'db-data:/var/lib/postgresql/data'
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U postgres
+      interval: 5s
+      timeout: 3s
+      retries: 3
+    networks:
+      - back-tier
+networks:
+  front-tier: null
+  back-tier: null
+volumes:
+  db-data: null
+
