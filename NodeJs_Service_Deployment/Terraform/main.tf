@@ -89,12 +89,11 @@ resource "aws_eip" "static_ip" {
 data "aws_route53_zone" "hassendevops_zone" {
   name         = "hassendevops.com."
   comment      = "Zone publique pour hassendevops.com"
-  private_zone = false
 }
 
 # Enregistrement DNS Route 53
 resource "aws_route53_record" "dns_record" {
-  zone_id = data.aws_route53_zone.selected.zone_id
+  zone_id = data.aws_route53_zone.hassendevops_zone.zone_id
   name    = "ec2.hassendevops.com"
   type    = "A"
   ttl     = 10000
