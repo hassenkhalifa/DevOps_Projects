@@ -65,6 +65,39 @@ resource "aws_security_group" "Node_App" {
 
 }
 
+resource "aws_security_group" "MULTI_CONTAINER_APP" {
+  name        = "Multi_Container_App"
+  description = "Security group for multi-container app inbound traffic"
+
+  ingress {
+    description = "Vote service"
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "Result service"
+    from_port   = 8081
+    to_port     = 8081
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "MULTI_CONTAINER_APP"
+  }
+}
+
+
 resource "aws_instance" "ubuntu_server" {
   ami                         = "ami-020cba7c55df1f615"
   instance_type               = "t2.micro"
