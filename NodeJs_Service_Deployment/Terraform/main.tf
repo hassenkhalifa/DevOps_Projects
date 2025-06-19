@@ -85,9 +85,10 @@ resource "aws_eip" "static_ip" {
   depends_on = [aws_instance.ubuntu_server]
 }
 
-# Sélection de la zone Route 53
-data "aws_route53_zone" "selected" {
+# Création de la zone Route 53
+data "aws_route53_zone" "hassendevops.com_zone" {
   name         = "hassendevops.com."
+  comment      = "Zone publique pour hassendevops.com"
   private_zone = false
 }
 
