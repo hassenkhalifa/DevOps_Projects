@@ -86,7 +86,7 @@ resource "aws_eip" "static_ip" {
 }
 
 # Création de la zone Route 53
-data "aws_route53_zone" "hassendevops.com_zone" {
+data "aws_route53_zone" "hassendevops_zone" {
   name         = "hassendevops.com."
   comment      = "Zone publique pour hassendevops.com"
   private_zone = false
