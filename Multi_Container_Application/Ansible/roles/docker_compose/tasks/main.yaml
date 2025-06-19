@@ -13,4 +13,4 @@
 - name: Lancer le Docker Compose
   ansible.builtin.command: docker-compose up --build -d
   args:
-    chdir: /tmp/devops_projects/Multi_Container_Application/
+    chdir: /tmp/devops_projects/Multi_Container_Application/DockerCompose
