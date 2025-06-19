@@ -3,13 +3,13 @@
     source: build
     build:
       path: /tmp/devops_projects/Dockerized_Service/DockerImages
-    name: NodejsApp
+    name: nodejsapp
     tag: latest
 
 - name: Lancer le conteneur Docker
   docker_container:
     name: mon_conteneur_node_js
-    image: NodejsApp:latest
+    image: nodejsapp:latest
     state: started
     restart_policy: always
     ports:
