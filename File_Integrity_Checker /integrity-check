@@ -1,0 +1,123 @@
+#!/bin/bash  
+  
+# Fonction pour calculer le hash SHA-256 d’un fichier  
+hash_file() {  
+  sha256sum "$1" | awk '{print $1}'  
+}  
+  
+# Fonction pour initialiser les hashes dans HASH_FILE  
+init() {  
+  local path="$1"  
+  > "$HASH_FILE"  # Vide le fichier hash  
+  
+  if [ -f "$path" ]; then  
+    echo "$(hash_file "$path")  $path" >> "$HASH_FILE"  
+  elif [ -d "$path" ]; then  
+    find "$path" -type f | while read -r file; do  
+      echo "$(hash_file "$file")  $file" >> "$HASH_FILE"  
+    done  
+  else  
+    echo "Erreur: $path n’est pas un fichier ou un dossier valide."  
+    exit 1  
+  fi  
+  
+  echo "Hashes stockés avec succès dans $HASH_FILE."  
+}  
+  
+# Fonction pour vérifier l’intégrité  
+check() {  
+  local path="$1"  
+  if [ ! -f "$HASH_FILE" ]; then  
+    echo "Erreur: fichier de hash $HASH_FILE introuvable. Lancez init d’abord."  
+    exit 1  
+  fi  
+  
+  if [ -f "$path" ]; then  
+    check_file "$path"  
+  elif [ -d "$path" ]; then  
+    find "$path" -type f | while read -r file; do  
+      check_file "$file"  
+    done  
+  else  
+    echo "Erreur: $path n’est pas un fichier ou un dossier valide."  
+    exit 1  
+  fi  
+}  
+  
+# Fonction pour vérifier un fichier individuel  
+check_file() {  
+  local file="$1"  
+  local current_hash  
+  local stored_hash  
+  
+  current_hash=$(hash_file "$file")  
+  stored_hash=$(grep "  $file$" "$HASH_FILE" | awk '{print $1}')  
+  
+  if [ -z "$stored_hash" ]; then  
+    echo "$file : Statut inconnu (pas de hash stocké)"  
+  elif [ "$current_hash" = "$stored_hash" ]; then  
+    echo "$file : Non modifié"  
+  else  
+    echo "$file : Modifié (hash différent)"  
+  fi  
+}  
+  
+# Fonction pour mettre à jour le hash d’un fichier  
+update() {  
+  local path="$1"  
+  if [ ! -f "$HASH_FILE" ]; then  
+    echo "Erreur: fichier de hash $HASH_FILE introuvable. Lancez init d’abord."  
+    exit 1  
+  fi  
+  
+  if [ -f "$path" ]; then  
+    update_file "$path"  
+  elif [ -d "$path" ]; then  
+    find "$path" -type f | while read -r file; do  
+      update_file "$file"  
+    done  
+  else  
+    echo "Erreur: $path n’est pas un fichier ou un dossier valide."  
+    exit 1  
+  fi  
+}  
+  
+# Fonction pour mettre à jour un fichier individuel  
+update_file() {  
+  local file="$1"  
+  local new_hash  
+  
+  new_hash=$(hash_file "$file")  
+  # Supprime l’ancienne ligne  
+  sed -i "\|  $file$|d" "$HASH_FILE"  
+  # Ajoute la nouvelle ligne  
+  echo "$new_hash  $file" >> "$HASH_FILE"  
+  echo "$file : Hash mis à jour avec succès."  
+}  
+  
+# Gestion des arguments  
+if [ $# -ne 3 ]; then  
+  echo "Usage: $0 {init|check|update} <fichier_ou_dossier> <fichier_de_hash>"  
+  exit 1  
+fi  
+  
+COMMAND="$1"  
+TARGET_PATH="$2"  
+HASH_FILE="$3"  
+  
+case "$COMMAND" in  
+  init)  
+    init "$TARGET_PATH"  
+    ;;  
+  check)  
+    check "$TARGET_PATH"  
+    ;;  
+  update)  
+    update "$TARGET_PATH"  
+    ;;  
+  *)  
+    echo "Commande inconnue: $COMMAND"  
+    echo "Usage: $0 {init|check|update} <fichier_ou_dossier> <fichier_de_hash>"  
+    exit 1  
+    ;;  
+esac  
